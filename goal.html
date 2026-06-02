@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Goal Overlay</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; color: white; background: transparent; }
+        #goal-container { width: 360px; background: rgba(15, 15, 15, 0.85); border: 2px solid #333; border-radius: 12px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .bar-bg { width: 100%; height: 24px; background: #222; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #444; }
+        #goal-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #00ff87 0%, #60efff 100%); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        #goal-text { position: absolute; width: 100%; text-align: center; line-height: 24px; font-size: 13px; font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.9); }
+    </style>
+</head>
+<body>
+
+    <div id="goal-container">
+        <div class="header">
+            <span>Stream Goal</span>
+            <span id="target-text">0 EGP / 1000 EGP</span>
+        </div>
+        <div class="bar-bg">
+            <div id="goal-text">0 EGP (0%)</div>
+            <div id="goal-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        const GOAL_TARGET = 1000; // Set your target here
+        document.getElementById('target-text').innerText = `0 EGP / ${GOAL_TARGET} EGP`;
+
+        const bar = document.getElementById('goal-bar');
+        const text = document.getElementById('goal-text');
+        const streamChannel = new BroadcastChannel('stream_events');
+
+        function renderGoal() {
+            const current = parseFloat(localStorage.getItem('goal_progress')) || 0;
+            const percentage = Math.min((current / GOAL_TARGET) * 100, 100);
+            
+            bar.style.width = percentage + '%';
+            // Formats to show 2 decimal places if needed, plus EGP
+            text.innerText = `${current.toFixed(2)} EGP (${Math.round(percentage)}%)`;
+        }
+
+        streamChannel.onmessage = (event) => {
+            if (event.data.type === 'NEW_SUPPORT') {
+                renderGoal();
+            }
+        };
+
+        renderGoal();
+    </script>
+</body>
+</html>

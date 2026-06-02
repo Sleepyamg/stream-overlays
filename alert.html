@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alert Overlay</title>
+    <style>
+        body { margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui, sans-serif; background: transparent; }
+        #alert-container { display: none; position: relative; width: 500px; height: 500px; text-align: center; }
+        
+        /* Ensure the WebM video scales correctly */
+        video { width: 100%; height: 100%; object-fit: contain; background: transparent; }
+        
+        #alert-text { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%; 
+            color: white; 
+            font-size: 28px; 
+            font-weight: 900; 
+            text-shadow: 0px 2px 8px rgba(0,0,0,1), 0px 4px 16px rgba(0,0,0,0.8);
+            line-height: 1.4;
+            animation: pulse 1.5s infinite alternate;
+        }
+        .highlight { color: #00ff87; }
+
+        @keyframes pulse {
+            from { transform: translate(-50%, -50%) scale(0.98); }
+            to { transform: translate(-50%, -50%) scale(1.02); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="alert-container">
+        <video id="alert-video" src="alert-video.webm" preload="auto"></video>
+        <div id="alert-text"></div>
+    </div>
+
+    <script>
+        const container = document.getElementById('alert-container');
+        const video = document.getElementById('alert-video');
+        const text = document.getElementById('alert-text');
+        const streamChannel = new BroadcastChannel('stream_events');
+        
+        let alertQueue = [];
+        let isPlaying = false;
+
+        streamChannel.onmessage = (event) => {
+            if (event.data.type === 'NEW_SUPPORT') {
+                alertQueue.push(event.data);
+                processQueue();
+            }
+        };
+
+        function processQueue() {
+            if (isPlaying || alertQueue.length === 0) return;
+            
+            isPlaying = true;
+            const currentAlert = alertQueue.shift();
+
+            text.innerHTML = `Thanks <span class="highlight">${currentAlert.name}</span> for supporting with <span class="highlight">${currentAlert.amount} EGP</span>!`;
+            
+            container.style.display = 'block';
+            video.currentTime = 0;
+            
+            video.play().catch(err => console.log("Play interrupted:", err));
+
+            video.onended = () => {
+                container.style.display = 'none';
+                isPlaying = false;
+                processQueue();
+            };
+        }
+    </script>
+</body>
+</html>

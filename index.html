@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stream Control Panel</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #121214; color: #fff; padding: 40px; max-width: 400px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #a1a1aa; }
+        input { width: 100%; padding: 10px; border: 1px solid #3f3f46; background: #18181b; color: #fff; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #1d4ed8; }
+        .status { margin-top: 20px; padding: 10px; background: #27272a; border-radius: 6px; font-size: 14px; text-align: center; color: #a1a1aa; }
+    </style>
+</head>
+<body>
+    <h2>Stream Controls</h2>
+    
+    <div class="form-group">
+        <label for="supporterName">Supporter Name</label>
+        <input type="text" id="supporterName" placeholder="e.g., Ahmed">
+    </div>
+
+    <div class="form-group">
+        <label for="supportAmount">Amount (EGP)</label>
+        <input type="number" id="supportAmount" placeholder="Type amount manually, e.g., 50">
+    </div>
+
+    <button onclick="submitSupport()">Send to Stream</button>
+
+    <div class="status">
+        Current Saved Progress: <span id="debug-total">0</span> EGP
+    </div>
+
+    <script>
+        const streamChannel = new BroadcastChannel('stream_events');
+
+        function updateDebugDisplay() {
+            const currentTotal = parseFloat(localStorage.getItem('goal_progress')) || 0;
+            document.getElementById('debug-total').innerText = currentTotal;
+        }
+
+        function submitSupport() {
+            const nameInput = document.getElementById('supporterName');
+            const amountInput = document.getElementById('supportAmount');
+            
+            const name = nameInput.value.trim();
+            const amount = parseFloat(amountInput.value);
+
+            if (!name || isNaN(amount)) {
+                alert('Please enter a valid name and amount.');
+                return;
+            }
+
+            let currentTotal = parseFloat(localStorage.getItem('goal_progress')) || 0;
+            currentTotal += amount;
+            localStorage.setItem('goal_progress', currentTotal);
+
+            streamChannel.postMessage({
+                type: 'NEW_SUPPORT',
+                name: name,
+                amount: amount,
+                newTotal: currentTotal
+            });
+
+            nameInput.value = '';
+            amountInput.value = '';
+            updateDebugDisplay();
+        }
+
+        window.addEventListener('storage', updateDebugDisplay);
+        updateDebugDisplay();
+    </script>
+</body>
+</html>
