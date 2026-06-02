@@ -2,18 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Goal Overlay</title>
+    <title>PC Goal Overlay</title>
     <style>
+        /* Transparent body so it sits perfectly over gameplay */
         body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; color: white; background: transparent; }
         
-        /* Clean dark container with a subtle light violet border */
+        /* Removed outer background box, border, and shadows */
         #goal-container { 
             width: 360px; 
-            background: rgba(20, 16, 28, 0.9); 
-            border: 2px solid #a78bfa; 
-            border-radius: 12px; 
-            padding: 12px; 
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2); 
+            padding: 4px; 
         }
         
         .header { 
@@ -24,20 +21,23 @@
             margin-bottom: 8px; 
             text-transform: uppercase; 
             letter-spacing: 1px; 
-            color: #e9d5ff; /* Light violet tinted text */
+            color: #e9d5ff; /* Light violet text */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); /* Ensures it's readable on bright gameplay */
         }
         
+        /* The container for the loading bar itself */
         .bar-bg { 
             width: 100%; 
             height: 26px; 
-            background: #1e1b29; 
+            background: rgba(30, 27, 41, 0.75); /* Dark background with slight transparency */
             border-radius: 6px; 
             overflow: hidden; 
             position: relative; 
             border: 1px solid #4c1d95; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
         
-        /* New Light Violet Gradient */
+        /* Violet Gradient Loading Bar */
         #goal-bar { 
             height: 100%; 
             width: 0%; 
@@ -60,7 +60,8 @@
 
     <div id="goal-container">
         <div class="header">
-            <span>Stream Goal</span>
+            <!-- Changed title to PC GOAL -->
+            <span>PC Goal</span>
             <span id="target-text">0 EGP / 1000 EGP</span>
         </div>
         <div class="bar-bg">
@@ -70,7 +71,7 @@
     </div>
 
     <script>
-        const GOAL_TARGET = 1000; // Change your goal target here if needed
+        const GOAL_TARGET = 1000; // Adjust your PC target amount here
         
         const bar = document.getElementById('goal-bar');
         const barText = document.getElementById('goal-text');
@@ -78,28 +79,20 @@
         const streamChannel = new BroadcastChannel('stream_events');
 
         function renderGoal() {
-            // Pull the exact progress numbers from local storage
             const current = parseFloat(localStorage.getItem('goal_progress')) || 0;
             const percentage = Math.min((current / GOAL_TARGET) * 100, 100);
             
-            // 1. Update progress bar width
             bar.style.width = percentage + '%';
-            
-            // 2. Update the progress text inside the bar
             barText.innerText = `${current.toFixed(2)} EGP (${Math.round(percentage)}%)`;
-            
-            // 3. FIXED: Explicitly forcing the top header text to update its values right here
             topText.innerText = `${current.toFixed(0)} EGP / ${GOAL_TARGET} EGP`;
         }
 
-        // Listen for live updates coming directly from the OBS Control Panel Dock
         streamChannel.onmessage = (event) => {
             if (event.data.type === 'NEW_SUPPORT') {
                 renderGoal();
             }
         };
 
-        // Run immediately on startup to load saved data
         renderGoal();
     </script>
 </body>
