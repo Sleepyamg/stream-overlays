@@ -8,8 +8,14 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #a1a1aa; }
         input { width: 100%; padding: 10px; border: 1px solid #3f3f46; background: #18181b; color: #fff; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #1d4ed8; }
+        
+        /* Button Styling */
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-primary { background: #8b5cf6; color: white; } /* Violet to match theme */
+        .btn-primary:hover { background: #7c3aed; }
+        .btn-danger { background: #dc2626; color: white; margin-top: 30px; } /* Red for reset */
+        .btn-danger:hover { background: #b91c1c; }
+        
         .status { margin-top: 20px; padding: 10px; background: #27272a; border-radius: 6px; font-size: 14px; text-align: center; color: #a1a1aa; }
     </style>
 </head>
@@ -26,11 +32,14 @@
         <input type="number" id="supportAmount" placeholder="Type amount manually, e.g., 50">
     </div>
 
-    <button onclick="submitSupport()">Send to Stream</button>
+    <button class="btn-primary" onclick="submitSupport()">Send to Stream</button>
 
     <div class="status">
         Current Saved Progress: <span id="debug-total">0</span> EGP
     </div>
+
+    <!-- NEW RESET BUTTON -->
+    <button class="btn-danger" onclick="resetGoal()">Reset Goal to 0</button>
 
     <script>
         const streamChannel = new BroadcastChannel('stream_events');
@@ -66,6 +75,22 @@
             nameInput.value = '';
             amountInput.value = '';
             updateDebugDisplay();
+        }
+
+        // NEW RESET FUNCTION
+        function resetGoal() {
+            if (confirm("Are you sure you want to completely reset the PC Goal back to 0 EGP?")) {
+                // Set the local storage to 0
+                localStorage.setItem('goal_progress', 0);
+                
+                // Tell OBS to update
+                streamChannel.postMessage({
+                    type: 'RESET_GOAL'
+                });
+                
+                // Update the control panel display
+                updateDebugDisplay();
+            }
         }
 
         window.addEventListener('storage', updateDebugDisplay);
