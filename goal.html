@@ -2,21 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PC Goal Overlay</title>
+    <title>Motherboard Goal Overlay</title>
     <style>
         body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; color: white; background: transparent; }
         #goal-container { width: 360px; padding: 4px; }
-        .header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; color: #e9d5ff; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); }
-        .bar-bg { width: 100%; height: 26px; background: rgba(30, 27, 41, 0.75); border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #4c1d95; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
-        #goal-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #c084fc 0%, #a78bfa 100%); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        #goal-text { position: absolute; width: 100%; text-align: center; line-height: 26px; font-size: 13px; font-weight: 800; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
+        
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 14px; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: #e9d5ff; 
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); 
+        }
+        
+        .bar-bg { 
+            width: 100%; 
+            height: 26px; 
+            background: rgba(30, 27, 41, 0.75); 
+            border-radius: 6px; 
+            overflow: hidden; 
+            position: relative; 
+            border: 1px solid #4c1d95; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); 
+        }
+        
+        #goal-bar { 
+            height: 100%; 
+            width: 0%; 
+            background: linear-gradient(90deg, #c084fc 0%, #a78bfa 100%); 
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        #goal-text { 
+            position: absolute; 
+            width: 100%; 
+            text-align: center; 
+            line-height: 26px; 
+            font-size: 13px; 
+            font-weight: 800; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9); 
+        }
     </style>
 </head>
 <body>
     <div id="goal-container">
         <div class="header">
-            <span>PC Goal</span>
-            <span id="target-text">0 EGP / 60000 EGP</span>
+            <!-- Updated Title -->
+            <span>Gigabyte B850 GAMING</span>
+            <!-- Updated initial placeholder text to 9000 -->
+            <span id="target-text">0 EGP / 9000 EGP</span>
         </div>
         <div class="bar-bg">
             <div id="goal-text">0.00 EGP (0%)</div>
@@ -25,8 +63,8 @@
     </div>
 
     <script>
-        // UPDATED: Goal is now 60,000
-        const GOAL_TARGET = 60000; 
+        // UPDATED: Target is now 9,000
+        const GOAL_TARGET = 9000; 
         
         const bar = document.getElementById('goal-bar');
         const barText = document.getElementById('goal-text');
