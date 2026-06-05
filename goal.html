@@ -15,8 +15,14 @@
             margin-bottom: 8px; 
             text-transform: uppercase; 
             letter-spacing: 1px; 
-            color: #e9d5ff; 
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); 
+            color: #ffffff; /* Pure white for max contrast */
+            /* Hard black outline + deep drop shadow */
+            text-shadow: 
+                -1px -1px 0 #000,  
+                 1px -1px 0 #000,
+                -1px  1px 0 #000,
+                 1px  1px 0 #000,
+                 0px  4px 10px rgba(0, 0, 0, 1); 
         }
         
         .bar-bg { 
@@ -51,9 +57,7 @@
 <body>
     <div id="goal-container">
         <div class="header">
-            <!-- Updated Title -->
             <span>Gigabyte B850 GAMING</span>
-            <!-- Updated initial placeholder text to 9000 -->
             <span id="target-text">0 EGP / 9000 EGP</span>
         </div>
         <div class="bar-bg">
@@ -63,7 +67,6 @@
     </div>
 
     <script>
-        // UPDATED: Target is now 9,000
         const GOAL_TARGET = 9000; 
         
         const bar = document.getElementById('goal-bar');
